@@ -24,6 +24,16 @@ Install required tools:
 - minimap 2 (https://github.com/lh3/minimap2)
 - samtools (https://github.com/samtools/samtools)
 - seqkit (https://bioinf.shenwei.me/seqkit/#installation)
+- 
+# Configuration
+
+Before running the pipeline, you need to specify the full path to the `telofinder.py` script.
+
+Edit the configuration variable `TELOFINDER_PATH` in the `run_pipeline.py` script to point to the correct location:
+
+```python
+TELOFINDER_PATH = '/full/path/to/telofinder.py'
+```
 
 # Usage
 
