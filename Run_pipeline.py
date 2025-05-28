@@ -37,9 +37,8 @@ def check_csv_file(csv_path,trim):
     # Load the CSV file
     try:
         data = pd.read_csv(csv_path,sep='\t')
-        print(data)
     except Exception as e:
-        sys.exit(f"Impossible de charger le fichier CSV : {e}")
+        sys.exit(f"Unable to load the CSV file: {e}")
 
     # Define required columns
     required_columns = ["Strain", "Reference", "Notrim_reads", "Trim_reads"]
