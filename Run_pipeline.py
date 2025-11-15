@@ -15,7 +15,7 @@ import sys
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Pipeline for detecting terminal telomeres in nanopore reads.")
-    parser.add_argument('-i','--input_data', type=str, required=True, help="Input CSV file containing file paths")
+    parser.add_argument('-i','--input_data', type=str, required=True, help="Input TSV file containing file paths")
     parser.add_argument('-o','--output_dir', type=str, required=True, help="Output directory for the results.")
     parser.add_argument('-t', '--threads', type=str, default='3', help="Number of threads to use. Default is 3.")
     parser.add_argument('-l', '--intern_min_length', type=str, default='no', help="Keep internal telomeric assemblies if their length is above this value. Default is 'no'")
@@ -24,21 +24,21 @@ def parse_arguments():
 
 def check_csv_file(csv_path,trim):
     """
-    Validates the input CSV file.
+    Validates the input TSV file.
     
     Parameters:
-        csv_path (str): Path to the input CSV file.
+        csv_path (str): Path to the input TSV file.
         trim (bool): Whether only trimmed reads are provided (no access to untrimmed reads).
     
     Returns:
-        pandas.DataFrame: The validated CSV content as a DataFrame.
+        pandas.DataFrame: The validated TSV content as a DataFrame.
     """
 
-    # Load the CSV file
+    # Load the TSV file
     try:
         data = pd.read_csv(csv_path,sep='\t')
     except Exception as e:
-        sys.exit(f"Unable to load the CSV file: {e}")
+        sys.exit(f"Unable to load the TSV file: {e}")
 
     # Define required columns
     required_columns = ["Strain", "Reference", "Notrim_reads", "Trim_reads"]
@@ -157,11 +157,11 @@ def extract_reads_from_bam(bam_file, notrim_file, chrom, start, end, output_dir,
     Returns:
         int: Number of extracted reads.
     """
-    ext_bam = f'{output_dir}Extract_reads/{strain}-{chrom}:{start}-{end}.bam'
-    ext_sam = f'{output_dir}Extract_reads/{strain}-{chrom}:{start}-{end}.sam'
-    ext_fasta = f'{output_dir}Extract_reads/{strain}-{chrom}:{start}-{end}.fasta'
+    ext_bam = f'{output_dir}Extract_reads/{strain}-{chrom}_{start}-{end}.bam'
+    ext_sam = f'{output_dir}Extract_reads/{strain}-{chrom}_{start}-{end}.sam'
+    ext_fasta = f'{output_dir}Extract_reads/{strain}-{chrom}_{start}-{end}.fasta'
     if notrim_file != 'No':
-        ext_notrim_fasta = f'{output_dir}Extract_reads/{strain}-{chrom}:{start}-{end}_notrim.fasta'
+        ext_notrim_fasta = f'{output_dir}Extract_reads/{strain}-{chrom}_{start}-{end}_notrim.fasta'
     cmd_bam = f'samtools view -h {bam_file} {chrom}:{start}-{end} -b -o {ext_bam}'
     cmd_fasta = f'samtools fasta {ext_bam} > {ext_fasta}'
     cmd_sam = f'samtools view -h {ext_bam} > {ext_sam}'
@@ -341,10 +341,10 @@ def main(args):
                 start=str(int(TFa.at[i,'start']))
                 end=str(int(TFa.at[i,'end']))
                 if trim == False:
-                    fasta_file = f'{output_dir}Extract_reads/{strain}-{chrom}:{start}-{end}_notrim.fasta'
+                    fasta_file = f'{output_dir}Extract_reads/{strain}-{chrom}_{start}-{end}_notrim.fasta'
                 else:
-                    fasta_file = f'{output_dir}Extract_reads/{strain}-{chrom}:{start}-{end}.fasta'
-                out_dir = f'{output_dir}Telofinder_Reads/{strain}-{chrom}:{start}-{end}'
+                    fasta_file = f'{output_dir}Extract_reads/{strain}-{chrom}_{start}-{end}.fasta'
+                out_dir = f'{output_dir}Telofinder_Reads/{strain}-{chrom}_{start}-{end}'
                 run_telofinder_on_reads(fasta_file, out_dir,T)
     print(f"Step 4 completed: Telofinder results on extracted reads are saved in {output_dir}Telofinder_Reads/")
 
@@ -360,12 +360,12 @@ def main(args):
                 start=str(int(TFa.at[i,'start']))
                 end=str(int(TFa.at[i,'end']))
                 if trim == False : 
-                    fasta_file = f'{output_dir}Extract_reads/{strain}-{chrom}:{start}-{end}_notrim.fasta'
-                    trim_file = f'{output_dir}Extract_reads/{strain}-{chrom}:{start}-{end}.fasta'
+                    fasta_file = f'{output_dir}Extract_reads/{strain}-{chrom}_{start}-{end}_notrim.fasta'
+                    trim_file = f'{output_dir}Extract_reads/{strain}-{chrom}_{start}-{end}.fasta'
                     adapt = check_adapter_presence(fasta_file, trim_file)
-                sam_file = f'{output_dir}Extract_reads/{strain}-{chrom}:{start}-{end}.sam'
+                sam_file = f'{output_dir}Extract_reads/{strain}-{chrom}_{start}-{end}.sam'
                 Sam = pd.read_csv(sam_file,delim_whitespace=True,names=['QNAME','FLAG','RNAME','POS','MAPQ','CIGAR','RNEXT','PNEXT','TLEN','SEQ','QUAL','NM','ms','AS','nn','tp','cm','s1','s2','dv','SA'], index_col=False,comment='@', engine="python")
-                result_file = f'{output_dir}Telofinder_Reads/{strain}-{chrom}:{start}-{end}/merged_telom_df.csv'
+                result_file = f'{output_dir}Telofinder_Reads/{strain}-{chrom}_{start}-{end}/merged_telom_df.csv'
                 df = pd.read_csv(result_file, sep=',').dropna()
 
                 for read in set(df['chrom']):
