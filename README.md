@@ -1,6 +1,6 @@
 # Yeast2025
 
-Code for pipeline presented in the paper 'Natural diversity of telomere length distributions across 100 yeast strains' Clotilde Garrido, Etienne Kornobis, Nicolas Agier, Oana Ilioaia, Gilles Fischer, Zhou Xu.
+Code for pipeline presented in the paper 'Natural diversity of telomere length distributions across 100 *Saccharomyces cerevisiae* strains' Clotilde Garrido, Cintia Gómez-Muñoz,Etienne Kornobis, Nicolas Agier, Oana Ilioaia, Gilles Fischer, Zhou Xu.
 
 @author: Clotilde Garrido, Sorbonne Université - CNRS
 
@@ -24,7 +24,7 @@ Install required tools:
 - minimap 2 (https://github.com/lh3/minimap2)
 - samtools (https://github.com/samtools/samtools)
 - seqkit (https://bioinf.shenwei.me/seqkit/#installation)
-- 
+  
 # Configuration
 
 Before running the pipeline, you need to specify the full path to the `telofinder.py` script.
